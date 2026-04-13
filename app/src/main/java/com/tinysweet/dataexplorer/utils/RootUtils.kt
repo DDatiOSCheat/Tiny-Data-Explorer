@@ -1,4 +1,4 @@
-package com.example.rootforgedataexplorer.utils
+package com.tinysweet.dataexplorer.utils
 
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ShellUtils
@@ -36,7 +36,7 @@ object RootUtils {
     suspend fun executeCommand(command: String): List<String> = withContext(Dispatchers.IO) {
         try {
             val result = ShellUtils.fastCmdResult(rootShell, command)
-            result ?: emptyList()
+            result?.out ?: emptyList()
         } catch (e: Exception) {
             emptyList()
         }
@@ -47,7 +47,7 @@ object RootUtils {
      */
     suspend fun executeCommands(commands: List<String>): Boolean = withContext(Dispatchers.IO) {
         try {
-            val result = rootShell?.newJob().add(commands).exec()
+            val result = rootShell?.newJob()?.add(*commands.toTypedArray())?.exec()
             result?.isSuccess == true
         } catch (e: Exception) {
             false
@@ -59,7 +59,7 @@ object RootUtils {
      */
     suspend fun readFile(path: String): String = withContext(Dispatchers.IO) {
         try {
-            ShellUtils.fastCmd(rootShell, "cat '$path'")
+            ShellUtils.fastCmd(rootShell, "cat '$path'").out.joinToString("\n")
         } catch (e: Exception) {
             ""
         }
@@ -70,9 +70,9 @@ object RootUtils {
      */
     suspend fun writeFile(path: String, content: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            val escapedContent = content.replace("'", "'\\''")
-            val result = ShellUtils.fastCmdResult(rootShell, "echo '$escaped_content' > '$path'")
-            result
+            val escapedContent = content.replace("'", "'\"'\"'")
+            val result = ShellUtils.fastCmdResult(rootShell, "echo '$escapedContent' > '$path'")
+            result?.isSuccess == true
         } catch (e: Exception) {
             false
         }
@@ -83,7 +83,7 @@ object RootUtils {
      */
     suspend fun listDirectory(path: String): List<FileInfo> = withContext(Dispatchers.IO) {
         try {
-            val result = ShellUtils.fastCmd(rootShell, "ls -la '$path'")
+            val result = ShellUtils.fastCmd(rootShell, "ls -la '$path'").out
             parseLsOutput(result)
         } catch (e: Exception) {
             emptyList()
@@ -93,11 +93,11 @@ object RootUtils {
     /**
      * Parse kết quả ls -la
      */
-    private fun parseLsOutput(output: String): List<FileInfo> {
+    private fun parseLsOutput(output: List<String>): List<FileInfo> {
         val files = mutableListOf<FileInfo>()
-        output.lines().forEach { line ->
-            if (line.startsWith("total") || line.isEmpty()) return@forEach
-            val parts = line.split(Regex("\\s+"), limit = 9)
+        for (line in output) {
+            if (line.startsWith("total") || line.isEmpty()) continue
+            val parts = line.trim().split(Regex("\\s+"), limit = 9)
             if (parts.size >= 9) {
                 val permissions = parts[0]
                 val isDirectory = permissions.startsWith("d")
@@ -121,7 +121,8 @@ object RootUtils {
      */
     suspend fun deleteFile(path: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            ShellUtils.fastCmdResult(rootShell, "rm -rf '$path'")
+            val result = ShellUtils.fastCmdResult(rootShell, "rm -rf '$path'")
+            result?.isSuccess == true
         } catch (e: Exception) {
             false
         }
@@ -132,7 +133,8 @@ object RootUtils {
      */
     suspend fun copyFile(source: String, destination: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            ShellUtils.fastCmdResult(rootShell, "cp -r '$source' '$destination'")
+            val result = ShellUtils.fastCmdResult(rootShell, "cp -r '$source' '$destination'")
+            result?.isSuccess == true
         } catch (e: Exception) {
             false
         }
@@ -143,7 +145,8 @@ object RootUtils {
      */
     suspend fun moveFile(source: String, destination: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            ShellUtils.fastCmdResult(rootShell, "mv '$source' '$destination'")
+            val result = ShellUtils.fastCmdResult(rootShell, "mv '$source' '$destination'")
+            result?.isSuccess == true
         } catch (e: Exception) {
             false
         }
@@ -154,7 +157,8 @@ object RootUtils {
      */
     suspend fun createDirectory(path: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            ShellUtils.fastCmdResult(rootShell, "mkdir -p '$path'")
+            val result = ShellUtils.fastCmdResult(rootShell, "mkdir -p '$path'")
+            result?.isSuccess == true
         } catch (e: Exception) {
             false
         }
@@ -165,7 +169,8 @@ object RootUtils {
      */
     suspend fun zipDirectory(sourceDir: String, outputZip: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            ShellUtils.fastCmdResult(rootShell, "cd '${sourceDir.substringBeforeLast("/")}' && zip -r '$outputZip' '${sourceDir.substringAfterLast("/")}'")
+            val result = ShellUtils.fastCmdResult(rootShell, "cd '${sourceDir.substringBeforeLast("/")}' && zip -r '$outputZip' '${sourceDir.substringAfterLast("/")}'")
+            result?.isSuccess == true
         } catch (e: Exception) {
             false
         }
@@ -176,7 +181,8 @@ object RootUtils {
      */
     suspend fun unzipFile(zipFile: String, destinationDir: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            ShellUtils.fastCmdResult(rootShell, "unzip -o '$zipFile' -d '$destinationDir'")
+            val result = ShellUtils.fastCmdResult(rootShell, "unzip -o '$zipFile' -d '$destinationDir'")
+            result?.isSuccess == true
         } catch (e: Exception) {
             false
         }
@@ -187,7 +193,7 @@ object RootUtils {
      */
     suspend fun getDirectorySize(path: String): String = withContext(Dispatchers.IO) {
         try {
-            ShellUtils.fastCmd(rootShell, "du -sh '$path' | cut -f1")
+            ShellUtils.fastCmd(rootShell, "du -sh '$path' | cut -f1").out.firstOrNull() ?: "Unknown"
         } catch (e: Exception) {
             "Unknown"
         }
@@ -201,13 +207,3 @@ object RootUtils {
         rootShell = null
     }
 }
-
-/**
- * Thông tin file/folder
- */
-data class FileInfo(
-    val name: String,
-    val isDirectory: Boolean,
-    val size: Long,
-    val permissions: String
-)

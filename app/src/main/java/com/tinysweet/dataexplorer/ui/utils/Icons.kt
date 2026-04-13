@@ -1,4 +1,4 @@
-package com.example.rootforgedataexplorer.ui.utils
+package com.tinysweet.dataexplorer.ui.utils
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -26,7 +26,7 @@ val Settings: ImageVector = Icons.Default.Settings
 // Backup icon
 val Backup: ImageVector = Icons.Default.Backup
 
-// Code icon for Hex Viewer  
+// Code icon for Hex Viewer
 val Code: ImageVector = Icons.Default.Code
 
 // Edit icon for Text Editor
@@ -50,7 +50,7 @@ val Delete: ImageVector = Icons.Default.Delete
 // Copy icon
 val Copy: ImageVector = Icons.Default.ContentCopy
 
-// Cut icon  
+// Cut icon
 val Cut: ImageVector = Icons.Default.ContentCut
 
 // Paste icon
