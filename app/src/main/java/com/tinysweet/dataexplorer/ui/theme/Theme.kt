@@ -1,4 +1,4 @@
-package com.example.rootforgedataexplorer.ui.theme
+package com.tinysweet.dataexplorer.ui.theme
 
 import android.app.Activity
 import android.os.Build

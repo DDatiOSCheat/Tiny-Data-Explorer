@@ -1,4 +1,4 @@
-package com.example.rootforgedataexplorer
+package com.tinysweet.dataexplorer
 
 import android.os.Bundle
 import android.widget.Toast
@@ -9,11 +9,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.example.rootforgedataexplorer.ui.theme.RootForgeDataExplorerTheme
-import com.example.rootforgedataexplorer.ui.components.LoadingScreen
-import com.example.rootforgedataexplorer.ui.components.RootRequestScreen
-import com.example.rootforgedataexplorer.ui.screens.MainScreen
-import com.example.rootforgedataexplorer.utils.RootUtils
+import com.tinysweet.dataexplorer.ui.theme.RootForgeDataExplorerTheme
+import com.tinysweet.dataexplorer.ui.components.LoadingScreen
+import com.tinysweet.dataexplorer.ui.components.RootRequestScreen
+import com.tinysweet.dataexplorer.ui.screens.MainScreen
+import com.tinysweet.dataexplorer.utils.RootUtils
 
 class MainActivity : ComponentActivity() {
     

@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ddatios.rootforge"
+    namespace = "com.tinysweet.dataexplorer"
     compileSdk = 35          // tạm đổi xuống 35 để tránh warning (bạn có thể thử 36 sau)
 
     defaultConfig {
-        applicationId = "com.ddatios.rootforge"
+        applicationId = "com.tinysweet.dataexplorer"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
