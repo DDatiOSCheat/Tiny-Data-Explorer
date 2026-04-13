@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.ddatios.rootforge"
-    compileSdk = 36
+    compileSdk = 35          // tạm đổi xuống 35 để tránh warning (bạn có thể thử 36 sau)
 
     defaultConfig {
         applicationId = "com.ddatios.rootforge"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -45,7 +45,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.6.10"
+        kotlinCompilerExtensionVersion = "1.6.10"   // giữ tạm, BOM sẽ quản lý
     }
 
     packaging {
@@ -56,18 +56,23 @@ android {
 }
 
 dependencies {
+    // Compose BOM (quan trọng nhất - quản lý version tự động)
+    implementation(platform("androidx.compose:compose-bom:2026.03.01"))
+
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.activity:activity-compose:1.9.0")
-    implementation("androidx.compose.ui:ui:1.6.10")
-    implementation("androidx.compose.ui:ui-graphics:1.6.10")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.10")
-    implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
 
-    // Root - Libsu (dùng version mới nhất ổn định)
+    // Compose libraries (không cần ghi version nữa)
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+
+    // Root - Libsu
     implementation("com.github.topjohnwu:libsu:6.0.0")
 
     // SQLite
@@ -78,11 +83,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
 
-    // Testing
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.10")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.10")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.10")
+    // Debug / Testing
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 }
