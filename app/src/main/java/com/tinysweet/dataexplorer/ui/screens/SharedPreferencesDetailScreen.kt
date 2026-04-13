@@ -297,15 +297,15 @@ fun parseSharedPreferencesXml(xmlContent: String): List<PrefEntry> {
                     }
 
                     "int", "float", "boolean", "long" -> {
-                        val type = parser.name
+                        val entryType = parser.name
                         val key = parser.getAttributeValue(null, "name")
                         val attrValue = parser.getAttributeValue(null, "value") ?: ""
                         if (!key.isNullOrBlank()) {
                             entries.add(
                                 PrefEntry(
                                     key = key,
-                                    value = parseValueByType(attrValue, type),
-                                    type = type
+                                    value = parseValueByType(attrValue, entryType),
+                                    type = entryType
                                 )
                             )
                         }
@@ -383,8 +383,8 @@ fun escapeXml(value: String): String {
         .replace("&", "&")
         .replace("<", "<")
         .replace(">", ">")
-        .replace("\u0022", """)
-        .replace("\u0027", "'")
+        .replace("\"", """)
+        .replace("'", "'")
 }
 
 fun parseValueByType(value: String, type: String): Any {
